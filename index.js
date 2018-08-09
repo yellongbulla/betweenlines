@@ -7,10 +7,13 @@ app.use(bodyParser.json());
 // QUANTUM RANDOM NUMBER
 app.get('/qrand',function(req,res){
   console.log("QRAND");
-  qrand.getRandomHexOctets(1024,function(e,d){
-    if(e===null){var r="";for(var i in d){if(!isNaN(d[i])){r+=d[i];}}var o=new Object();o.random=r.substr(0,640);res.status(200);res.send(o);}
-    else{console.log("ERROR: "+e);}
-  });
+  //qrand.getRandomHexOctets(1024,function(e,d){
+  //  if(e===null){var r="";for(var i in d){if(!isNaN(d[i])){r+=d[i];}}var o=new Object();o.random=r.substr(0,640);res.status(200);res.send(o);}
+  //  else{console.log("ERROR: "+e);}
+  //});
+  var o=new Object();
+  o.random="2096827251420928680054318987926956223138726545634937920181698833889499802476532641168412233816360468779143542240513597674505868584773084429337881240286149891157885566032714059864588858262688353565079256163190715942732275370047999016343208737480529218175537139114378759734353550082084475386380426257017253536021641753270960180100234640018696258676439493277276581267261392097598494800588634277198805343264372687876241275983920249573259700339445687334515972101040132593555607874331027999584001970774957452666015885092766983448879618448830064517057350305808976423342617690336682942285805368169505756968556853381251524290501127140672335184155736";
+  res.status(200);res.send(o);
 });
 
 // CHALLENGES
@@ -90,7 +93,7 @@ app.get('/challenge',function(req,res){
       var c0=seedColor(seed,"b").substr(5,2), c1=seedColor(seed,"g").substr(3,2), c2=seedColor(seed,"r").substr(1,2);
       var k0=seedKey(seedColor2GridKey(c0)), k1=seedKey(seedColor2GridKey(c1)), k2=seedKey(seedColor2GridKey(c2));
       var key=2+3+3+1;
-      var msg="thumb over camera click the invisible t";
+      var msg="thumb over camera click where t should be";
       var msgS="", msgA=msg.split(""), ks=0;
       for(var m in msgA){
         if(ks>2){ks=0;}
@@ -104,12 +107,13 @@ app.get('/challenge',function(req,res){
         ks++;
       }
       msgS=msgS.substr(0,(msgS.length-2));
-      r.text=msgS;
-      r.hint="cargo number sequence. caesar shift alpha loop key. function(lp){return ((aa+ky[lp])+cs)}";
+      r.text="... thank you.<br><br>"+msgS;
+      r.hint="cargo number sequence. caesar shift alpha. loop key function(lp){return ((csa+key[lp])+cns)}";
       r.status=true;
     }
     if(type==="chk"){
-      if(req.query.a==="11475000"){
+      // min:1475000 - max:16000000
+      if(parseInt(req.query.a)<=16000000){
         if(parseInt(req.query.b)>256 && parseInt(req.query.b)<320){
           if(parseInt(req.query.c)>256 && parseInt(req.query.c)<320){r.status=true;}
         }
@@ -125,7 +129,7 @@ app.get('/challenge',function(req,res){
       var c0=seedColor(seed,"b").substr(5,2), c1=seedColor(seed,"g").substr(3,2), c2=seedColor(seed,"r").substr(1,2);
       var k0=seedKey(seedColor2GridKey(c0)), k1=seedKey(seedColor2GridKey(c1)), k2=seedKey(seedColor2GridKey(c2));
       var key=2+3+3+1;
-      var msg="listen be quiet then click same spot";
+      var msg="listen quiet abstract click same spot";
       var msgS="", msgA=msg.split(""), ks=0;
       for(var m in msgA){
         if(ks>2){ks=0;}
@@ -139,7 +143,7 @@ app.get('/challenge',function(req,res){
         ks++;
       }
       msgS=msgS.substr(0,(msgS.length-2));
-      r.text=msgS;
+      r.text="... but are you paying attention?<br><br>"+msgS;
       r.status=true;
     }
     if(type==="chk"){
@@ -162,8 +166,8 @@ app.get('/challenge',function(req,res){
          o+="Where is your history?<br>";
          o+="How did the man wipe out your history?";
       r.quote=o;
-      r.text="Initial clue hidden in animation. Negate doubles on ends, second in doubles.<br>";
-      r.text+="Second clue hidden in quote. Remove the odd keep first and last only.";
+      r.text="Initial clue. Symbol animation. Second clue. Quote. All caps everything...<br>";
+      r.text+="i. Negate doubles on ends, second in doubles. ii. Remove the odd one out keep first and last only.<br>";
       r.status=true;
     }
     if(type==="chk"){
@@ -178,14 +182,54 @@ app.get('/challenge',function(req,res){
          o+="his life is made possible through the labor and the accomplishments of the many millions ";
          o+="past and present who are all hidden behind the small word 'society.'<br>";
       r.quote=o;
-      r.hint="Republic, Book VIII";
-      r.text="Wikipedia:l5h969129a9jo, not ";
+      r.hint="arcmin";
+      var str="verifiability";str=str.split(""), bit=new Array(), but="";
+      for(var i=0;i<str.length;i++){bit[i]=charTextToDigit(str[i]);}
+      for(var i=0;i<bit.length;i++){but+=convertBase(bit[i].toString(),10,60)+", ";}
+      r.text="Wikipedia:"+but+", not ";
       r.status=true;
     }
     if(type==="chk"){
       if(req.query.a==="truth"){r.status=true;}
     }
   }
+
+  if(id===7){
+    if(type==="init"){
+      var o="Dr. King's policy was that nonviolence would achieve the gains for black people in the United States. ";
+         o+="His major assumption was that if you are nonviolent, ";
+         o+="if you suffer, your opponent will see your suffering and will be moved to change his heart. ";
+         o+="That's very good. He only made one fallacious assumption: ";
+         o+="In order for nonviolence to work, your opponent must have a conscience.";
+      r.quote=o;
+      r.hint="est-il temps de faire l'ancien régime? Saros DYH";
+      r.blob="Options have been violently constrained. See 224";
+      r.text="The human species is the enemy? Green.<br>";
+      r.status=true;
+    }
+    if(type==="chk"){
+      if(req.query.a==="Fourth World War" && req.query.b==="indigenous"){r.status=true;}
+    }
+  }
+
+  if(id===8){
+    if(type==="init"){
+      var o="It is a historical fact that blacks were brought to this country ";
+         o+="for the profit of the ruling class which at the time were landowners. ";
+         o+="They needed someone to till the soil and grow profitable crops. ";
+         o+="Today we have shifted from an agrarian economy to a goods-production economy. ";
+         o+="But the same relationships exist between the private owner and the worker. Nothing has changed. ";
+         o+="Therefore, for working people to be free, they must seize control of the means of production.";
+      r.quote=o;
+      r.hint="";
+      r.text="Nonviolent activists go further than endorsing state violence with their ";
+      r.status=true;
+    }
+    if(type==="chk"){
+      if(req.query.a==="Fourth World War" && req.query.b==="indigenious"){r.status=true;}
+    }
+  }
+
   res.status(200);res.json(r);
 });
 
@@ -194,6 +238,24 @@ app.listen(3000,()=>{console.log("Listening on port 3000");});
 
 
 // SEED FUNCTIONS
+function convertBase(value, from_base, to_base) {
+  var range = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ+/'.split('');
+  var from_range = range.slice(0, from_base);
+  var to_range = range.slice(0, to_base);
+  
+  var dec_value = value.split('').reverse().reduce(function (carry, digit, index) {
+    if (from_range.indexOf(digit) === -1) throw new Error('Invalid digit `'+digit+'` for base '+from_base+'.');
+    return carry += from_range.indexOf(digit) * (Math.pow(from_base, index));
+  }, 0);
+  
+  var new_value = '';
+  while (dec_value > 0) {
+    new_value = to_range[dec_value % to_base] + new_value;
+    dec_value = (dec_value - (dec_value % to_base)) / to_base;
+  }
+  return new_value || '0';
+}
+
 function charTextToDigit(t){
   var v=0;
   if(t==="k"){t="c";}
@@ -255,7 +317,7 @@ function seedKey(t){
     if(k[i]==="y"){r=r+24;}
     if(k[i]==="z"){r=r+25;}
   }
-  if(r===0){r=i;}
+  if(r===0){r=t;}
   return r;
 }
 
