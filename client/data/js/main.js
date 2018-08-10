@@ -180,9 +180,9 @@ function challenge(id,opt,d){
     if(opt==="init"){
       if(g.data[id]===undefined && d!==undefined){
         var o="<div id='inputP"+id+"'>";
-             o+="<input type=text class=inputSml id='inputP"+id+"_0' style='margin-left:75px;margin-right:75px;' maxLength=1 size=1 />";
-             o+="<input type=text class=inputSml id='inputP"+id+"_1' style='margin-left:75px;margin-right:75px;' maxLength=1 size=1 />";
-             o+="<input type=text class=inputSml id='inputP"+id+"_2' style='margin-left:75px;margin-right:75px;' maxLength=1 size=1 />";
+             o+="<input type=text class=inputSml id='inputP"+id+"_0' style='margin-left:75px;margin-right:75px;text-align:center;' maxLength=1 size=1 />";
+             o+="<input type=text class=inputSml id='inputP"+id+"_1' style='margin-left:75px;margin-right:75px;text-align:center;' maxLength=1 size=1 />";
+             o+="<input type=text class=inputSml id='inputP"+id+"_2' style='margin-left:75px;margin-right:75px;text-align:center;' maxLength=1 size=1 />";
            o+="</div>";
         $("#input").append(o);
         $("#inputP"+id+"_0").keyup(function(e){challenge(id,"check");});
@@ -315,25 +315,41 @@ function challenge(id,opt,d){
       if(g.data[id]===undefined && d!==undefined){
         $("#inputP"+(id-1)).hide(0);
         g.data[id]=new Object(), g.data[id].str=d.text, g.data[id].hint=d.hint, g.data[id].blob=d.blob, g.data[id].quote=d.quote;
-        var o="<div id='inputP"+id+"' style='text-align:right;padding:5px;font-size:10px;'>"+g.data[id].str+"<br>";
-             o+="<div id=inputP"+id+"_msg'></div>";
-             o+="<input id='inputP"+id+"_0' maxLength=1 size=1 class=inputSml /> &nbsp; &nbsp; ";
-             o+="<input id='inputP"+id+"_1' maxLength=2 size=2 class=inputSml /> &nbsp; &nbsp; ";
-             o+="<input id='inputP"+id+"_2' maxLength=2 size=2 class=inputSml /> &nbsp; &nbsp; ";
-             o+="<input id='inputP"+id+"_3' maxLength=1 size=1 class=inputSml />";
-           o+="</div>";
+        var o="<div id=inputP"+id+" style='padding:5px;font-size:10px;text-align:right;'>";
+             o+=g.data[id].str+"<br><br>";
+             o+="<div id='inputP"+id+"_0' class=inputSlide><div id='inputP"+id+"_0a'></div><div id='inputP"+id+"_0txt'>200.00</div></div>";
+             o+="<div id='inputP"+id+"_1' class=inputSlide><div id='inputP"+id+"_1a'></div><div id='inputP"+id+"_1txt'>300.00</div></div>";
+             o+="<div id='inputP"+id+"_2'><button id='inputP"+id+"_2a'>BEEP</button></div>";
+         o+="</div>";
         $("#input").append(o);
-        $("#inputP"+id+"_0").keyup(function(e){challenge(id,"check");});
-        $("#inputP"+id+"_1").keyup(function(e){challenge(id,"check");});
-        $("#inputP"+id+"_2").keyup(function(e){challenge(id,"check");});
-        $("#inputP"+id+"_3").keyup(function(e){challenge(id,"check");});
+        $("#inputP"+id+"_0a").slider({min:200.00,max:300.00,value:250.50,step:0.05,change:function(){
+          $("#inputP"+id+"_0txt").html($("#inputP"+id+"_0a").slider("option","value"));
+        }});
+        $("#inputP"+id+"_1a").slider({min:200.00,max:300.00,value:250.50,step:0.05,change:function(){
+          $("#inputP"+id+"_1txt").html($("#inputP"+id+"_1a").slider("option","value"));
+        }});
+        $("#inputP"+id+"_0").find(".ui-slider-handle").focus(function(){
+          $(".inputSlide").css("border-color","#000");$("#inputP"+id+"_0").css("border-color","#fff");
+        });
+        $("#inputP"+id+"_1").find(".ui-slider-handle").focus(function(){
+          $(".inputSlide").css("border-color","#000");$("#inputP"+id+"_1").css("border-color","#fff");
+        });
+        $("#inputP"+id+"_2a").click(function(a){          
+          g.data[id].a0=new AudioContext(), g.data[id].o0=g.data[id].a0.createOscillator(), g.data[id].o0.type="sine";
+          g.data[id].a1=new AudioContext(), g.data[id].o1=g.data[id].a1.createOscillator(), g.data[id].o1.type="sine";
+          g.data[id].o0.frequency.value=$("#inputP"+id+"_0a").slider("option","value");
+          g.data[id].o1.frequency.value=$("#inputP"+id+"_1a").slider("option","value");
+          g.data[id].o0.connect(g.data[id].a0.destination);
+          g.data[id].o1.connect(g.data[id].a1.destination);
+          g.data[id].o0.start(0);g.data[id].o0.stop(2);
+          g.data[id].o1.start(0);g.data[id].o1.stop(2);
+        });
         imgTiles("riot");
         me.game.world.addChild(new textBox(128,108,100,20,g.data[id].hint,8,"#55ff55"),1800);
         me.game.world.addChild(new textBox(128,108,100,20,g.data[id].blob,8,"#ff5555"),1800);
         audioTrackPlay("5");
         $("#hint").hide(0);$("#hint").html(g.data[id].quote).show(750);
       }
-      challenge(id,"check");
     }
     if(opt==="check"){
       var i0=$("#inputP"+id+"_0").val(), i1=$("#inputP"+id+"_1").val(), i2=$("#inputP"+id+"_2").val(), i3=$("#inputP"+id+"_3").val();

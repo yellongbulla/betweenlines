@@ -204,7 +204,8 @@ app.get('/challenge',function(req,res){
       r.quote=o;
       r.hint="est-il temps de faire l'ancien régime? Saros DYH";
       r.blob="Options have been violently constrained. See 224";
-      r.text="The human species is the enemy? Green.<br>";
+      r.text="Binary existence… I can show you that one plus one equals three.<br>";
+      r.text+="function(){return (Y+M+D)-(cargoSequence)/humanSpeciesEnemyFor;}";
       r.status=true;
     }
     if(type==="chk"){
