@@ -3,17 +3,26 @@ var bodyParser=require('body-parser');
 var qrand=require('qrand');
 var app=express();
 app.use(bodyParser.json());
+app.use(express.static('client'));
 
+var g=new Object();
+g.seed="";
+qrand.getRandomHexOctets(1024,function(e,d){
+  console.log("QUANTUM SEED UPDATE");
+  if(e===null){var r="";for(var i in d){if(!isNaN(d[i])){r+=d[i];}}g.seed=r.substr(0,640);}else{console.log("ERROR: "+e);}
+  app.listen(3000,()=>{console.log("Listening on port 3000");});
+});
+
+function seedUpdate(){
+  qrand.getRandomHexOctets(1024,function(e,d){
+    console.log("QUANTUM SEED UPDATE");
+    if(e===null){var r="";for(var i in d){if(!isNaN(d[i])){r+=d[i];}}g.seed=r.substr(0,640);}else{console.log("ERROR: "+e);}
+  });
+}
 // QUANTUM RANDOM NUMBER
 app.get('/qrand',function(req,res){
-  console.log("QRAND");
-  //qrand.getRandomHexOctets(1024,function(e,d){
-  //  if(e===null){var r="";for(var i in d){if(!isNaN(d[i])){r+=d[i];}}var o=new Object();o.random=r.substr(0,640);res.status(200);res.send(o);}
-  //  else{console.log("ERROR: "+e);}
-  //});
-  var o=new Object();
-  o.random="2096827251420928680054318987926956223138726545634937920181698833889499802476532641168412233816360468779143542240513597674505868584773084429337881240286149891157885566032714059864588858262688353565079256163190715942732275370047999016343208737480529218175537139114378759734353550082084475386380426257017253536021641753270960180100234640018696258676439493277276581267261392097598494800588634277198805343264372687876241275983920249573259700339445687334515972101040132593555607874331027999584001970774957452666015885092766983448879618448830064517057350305808976423342617690336682942285805368169505756968556853381251524290501127140672335184155736";
-  res.status(200);res.send(o);
+  if(g.seed.length===0){return;}
+  else{var o=new Object();o.random=g.seed;res.status(200);res.send(o);}
 });
 
 // CHALLENGES
@@ -202,14 +211,18 @@ app.get('/challenge',function(req,res){
          o+="That's very good. He only made one fallacious assumption: ";
          o+="In order for nonviolence to work, your opponent must have a conscience.";
       r.quote=o;
-      r.hint="est-il temps de faire l'ancien régime? Saros DYH";
+      r.hint="est-il temps de faire l'ancien régime? Saros YMD";
       r.blob="Options have been violently constrained. See 224";
       r.text="Binary existence… I can show you that one plus one equals three.<br>";
       r.text+="function(){return (Y+M+D)-(cargoSequence)/humanSpeciesEnemyFor;}";
       r.status=true;
     }
     if(type==="chk"){
-      if(req.query.a==="Fourth World War" && req.query.b==="indigenous"){r.status=true;}
+      var a=parseFloat(req.query.a), b=parseFloat(req.query.b);
+      console.log((a-b));
+      console.log((b-a));
+      if((a-b)===34.75){r.status=true;}
+      if((b-a)===34.75){r.status=true;}
     }
   }
 
@@ -233,9 +246,6 @@ app.get('/challenge',function(req,res){
 
   res.status(200);res.json(r);
 });
-
-app.use(express.static('client'));
-app.listen(3000,()=>{console.log("Listening on port 3000");});
 
 
 // SEED FUNCTIONS

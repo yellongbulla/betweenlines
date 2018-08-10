@@ -114,7 +114,13 @@ function challenge(id,opt,d){
   var url="/challenge?seed="+g.cfg.seed+"&id="+id+"&type=chk";
 
   // CHALLENGE 0 (title screen)
-  if(id===0){if(opt==="init"){audioTrackPlay("0");$("#hint").html(d.quote);$("#hint").show(750);}}
+  if(id===0){
+    if(opt==="init"){
+      audioTrackPlay("0");
+      $("#title").html("prophecy");
+      $("#hint").html(d.quote);$("#hint").show(750);
+    }
+  }
 
   // CHALLENGE 1
   if(id===1){
@@ -122,6 +128,7 @@ function challenge(id,opt,d){
       var tf=false;      
       if(g.data[id]===undefined && d!==undefined){
         tf=true;
+        $("#title").html("the beginning");
         var o="<div id=inputP1>";
            o+="<div style='padding:2px;font-size:8px;text-align:right;'>Arrow keys to fine tune. Shift to change controls</div>";
            o+="<div id='inputP1_0' class=inputSlide><div id='inputP1_0a'></div></div>";
@@ -179,6 +186,7 @@ function challenge(id,opt,d){
   if(id===2){
     if(opt==="init"){
       if(g.data[id]===undefined && d!==undefined){
+        $("#title").html("niave adventurer");
         var o="<div id='inputP"+id+"'>";
              o+="<input type=text class=inputSml id='inputP"+id+"_0' style='margin-left:75px;margin-right:75px;text-align:center;' maxLength=1 size=1 />";
              o+="<input type=text class=inputSml id='inputP"+id+"_1' style='margin-left:75px;margin-right:75px;text-align:center;' maxLength=1 size=1 />";
@@ -212,6 +220,7 @@ function challenge(id,opt,d){
   // CHALLENGE 3
   if(id===3){
     if(opt==="init"){
+      $("#title").html("the end of the trail");
       $("#hint").hide(0);
       $("#inputP1").hide(0);
       $("#inputP2").hide(0);
@@ -238,6 +247,7 @@ function challenge(id,opt,d){
   // CHALLENGE 4
   if(id===4){
     if(opt==="init"){
+      $("#title").html("an abstracted new world");
       $("#hint").hide(0);
       $("#inputP3").hide(0);
       g.data[id]=new Object();
@@ -258,6 +268,7 @@ function challenge(id,opt,d){
   // CHALLENGE 5
   if(id===5){
     if(opt==="init"){
+      $("#title").html("distractions");
       $("#hint").hide(0);
       $("#inputP4").hide(0);
       g.data[id]=new Object();
@@ -284,6 +295,7 @@ function challenge(id,opt,d){
   if(id===6){
     if(opt==="init"){
       if(g.data[id]===undefined && d!==undefined){
+        $("#title").html("misinformation");
         $("#inputP5").hide(0);
         g.data[id]=new Object(), g.data[id].str=d.text, g.data[id].hint=d.hint, g.data[id].quote=d.quote;
         var o="<div id=inputP6 style='text-align:right;padding:5px;font-size:10px;'>"+g.data[id].str+" &nbsp; ";
@@ -312,14 +324,15 @@ function challenge(id,opt,d){
   // CHALLENGE 7
   if(id===7){
     if(opt==="init"){
+      $("#title").html("a hidden reality");
       if(g.data[id]===undefined && d!==undefined){
         $("#inputP"+(id-1)).hide(0);
         g.data[id]=new Object(), g.data[id].str=d.text, g.data[id].hint=d.hint, g.data[id].blob=d.blob, g.data[id].quote=d.quote;
         var o="<div id=inputP"+id+" style='padding:5px;font-size:10px;text-align:right;'>";
-             o+=g.data[id].str+"<br><br>";
+             o+=g.data[id].str+"<br>";
              o+="<div id='inputP"+id+"_0' class=inputSlide><div id='inputP"+id+"_0a'></div><div id='inputP"+id+"_0txt'>200.00</div></div>";
              o+="<div id='inputP"+id+"_1' class=inputSlide><div id='inputP"+id+"_1a'></div><div id='inputP"+id+"_1txt'>300.00</div></div>";
-             o+="<div id='inputP"+id+"_2'><button id='inputP"+id+"_2a'>BEEP</button></div>";
+             o+="<div id='inputP"+id+"_2' class=inputSlide><button id='inputP"+id+"_2a'>BEEP</button></div>";
          o+="</div>";
         $("#input").append(o);
         $("#inputP"+id+"_0a").slider({min:200.00,max:300.00,value:250.50,step:0.05,change:function(){
@@ -343,6 +356,7 @@ function challenge(id,opt,d){
           g.data[id].o1.connect(g.data[id].a1.destination);
           g.data[id].o0.start(0);g.data[id].o0.stop(2);
           g.data[id].o1.start(0);g.data[id].o1.stop(2);
+          challenge(id,"check");
         });
         imgTiles("riot");
         me.game.world.addChild(new textBox(128,108,100,20,g.data[id].hint,8,"#55ff55"),1800);
@@ -352,8 +366,7 @@ function challenge(id,opt,d){
       }
     }
     if(opt==="check"){
-      var i0=$("#inputP"+id+"_0").val(), i1=$("#inputP"+id+"_1").val(), i2=$("#inputP"+id+"_2").val(), i3=$("#inputP"+id+"_3").val();
-      url+="&a="+i0+"&b="+i1+"&c="+i2+"&d="+i3;
+      url+="&a="+$("#inputP"+id+"_0a").slider("option","value")+"&b="+$("#inputP"+id+"_1a").slider("option","value");
       $.getJSON(url,function(d){if(d.status===true && g.data[(id+1)]===undefined){challengeInit((id+1));}});
     }
   }
@@ -362,6 +375,7 @@ function challenge(id,opt,d){
   if(id===8){
     if(opt==="init"){
       if(g.data[id]===undefined && d!==undefined){
+        $("#title").html("do you have a permit");
         $("#inputP7").hide(0);
         g.data[id]=new Object(), g.data[id].str=d.text, g.data[id].hint=d.hint, g.data[id].quote=d.quote;
         var o="<div id='inputP"+id+"' style='text-align:right;padding:5px;font-size:10px;'>";
