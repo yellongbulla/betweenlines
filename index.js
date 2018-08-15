@@ -1,31 +1,29 @@
-var debug=true;
+var g=new Object();
+g.debug=false;
+g.seed="";
+
 var express=require('express');
 var bodyParser=require('body-parser');
 var qrand=require('qrand');
 var app=express();
 app.use(bodyParser.json());
 app.use(express.static('client'));
+seedUpdate();
+g.timer=setInterval(seedUpdate,((3600)*1000));
+app.listen(3000,()=>{console.log("Listening on port 3000");});
 
-
-
-var g=new Object();
-g.seed="";
-if(debug===true){seedDebug();init();}
-else{
-  qrand.getRandomHexOctets(1024,function(e,d){
-    if(e===null){var r="";for(var i in d){if(!isNaN(d[i])){r+=d[i];}}g.seed=r.substr(0,640);}else{console.log("ERROR: "+e);}
-    init();
-  });
-}
-function init(){app.listen(3000,()=>{console.log("Listening on port 3000");});}
+// SEED FUNCTIONS
 function seedDebug(){var s="1234567890";g.seed="";for(var i=0;i<64;i++){g.seed+=s;}}
 function seedUpdate(){
-  qrand.getRandomHexOctets(1024,function(e,d){
-    console.log("QUANTUM SEED UPDATE");
-    if(e===null){var r="";for(var i in d){if(!isNaN(d[i])){r+=d[i];}}g.seed=r.substr(0,640);}else{console.log("ERROR: "+e);}
-  });
+  if(g.debug!==true){
+    qrand.getRandomHexOctets(1024,function(e,d){
+      console.log("QUANTUM SEED UPDATE");
+      if(e===null){var r="";for(var i in d){if(!isNaN(d[i])){r+=d[i];}}g.seed=r.substr(0,640);}else{console.log("ERROR: "+e);}
+    });
+  }else{seedDebug();console.log("SKIPPING SEED UPDATE");}
 }
-// QUANTUM RANDOM NUMBER
+
+// RANDOM SEED
 app.get('/qrand',function(req,res){
   if(g.seed.length===0){return;}
   else{var o=new Object();o.random=g.seed;res.status(200);res.send(o);}
@@ -249,10 +247,72 @@ app.get('/challenge',function(req,res){
       r.quote=o;
       r.hint="";
       r.text="Support every revolutionary movement against the existing social and political order of things.";
+      var t0="carpe diem";
+      var t1="sequence r4g g4w";
+      var t2="mic up";
+      var t3="camera white click me";
+      var t4="shouts into the dark counting the seconds until a voice returns from";
+      var s0=morseSeq(t0);
+      var s1=morseSeq(t1);
+      var s4=morseSeq(t4);
+      // TURN T0 INTO KEY FOR T2
+      var seq0=t0.split(""), k0=0;
+      for(var i=0;i<seq0.length;i++){k0=k0+charTextToDigit(seq0[i]);}
+      // TURN T2 INTO KEY FOR T3
+      var seq2=t2.split(""), k2=0;
+      for(var i=0;i<seq2.length;i++){k2=k2+charTextToDigit(seq2[i]);}
+      // SHIFT T2 USING KEY0 INTO CAESAR DIGITS
+      var s2=t2.split(""), c2="";
+      for(var i=0;i<s2.length;i++){c2+=charTextToDigit(s2[i])+k0;}
+      var s2=morseSeq(c2);
+      // SHIFT T3 USING KEY2 INTO CAESAR DIGITS
+      var s3=t3.split(""), c3="";
+      for(var i=0;i<s3.length;i++){c3+=charTextToDigit(s3[i])+k2;}
+      var s3=morseSeq(c3);
+      r.flash=new Object();
+      r.flash.red=new Array();  var s0=s0.split("");for(var i=0;i<s0.length;i++){r.flash.red[i]=s0[i];}
+      r.flash.blue=new Array(); var s1=s1.split("");for(var i=0;i<s1.length;i++){r.flash.blue[i]=s1[i];}
+      r.flash.green=new Array();var s2=s2.split("");for(var i=0;i<s2.length;i++){r.flash.green[i]=s2[i];}
+      r.flash.black=new Array();var s3=s3.split("");for(var i=0;i<s3.length;i++){r.flash.black[i]=s3[i];}
+      r.flash.white=new Array();var s4=s4.split("");for(var i=0;i<s4.length;i++){r.flash.white[i]=s4[i];}
       r.status=true;
     }
     if(type==="chk"){
-      if(req.query.a==="Fourth World War" && req.query.b==="indigenious"){r.status=true;}
+      if(parseInt(req.query.a)>=22000000 && parseInt(req.query.b)>=20000){
+        if(parseInt(req.query.c)>=152 && parseInt(req.query.c)<=168){
+          if(parseInt(req.query.d)>=140 && parseInt(req.query.d)<=152){r.status=true;}
+        }
+      }
+    }
+  }
+
+  // CHALLENGE 9
+  if(id===9){
+    if(type==="init"){
+      r.title="There is nothing in the desert, and no man needs nothing.";
+      r.quote="What is utopian is not planting new seeds but expecting flowers from dying weeds.";
+       r.text="TITLE. LAST WORD. Join us in making the revolution a game;<br>";
+      r.text+="AUTHOR. LECTURED ABOUT. Majorities too may err and destroy our civilization.<br>";
+      r.status=true;
+    }
+    if(type==="chk"){
+      console.log(req.query.b);
+      if(req.query.a==="fuck" && req.query.b==="classical+liberalism"){r.status=true;}
+    }
+  }
+
+  // CHALLENGE 10
+  if(id===10){
+    if(type==="init"){
+      r.title="Reports incredible as they may seem are not the results of mass hysteria.";
+      r.quote="Men make their own history, but they do not make it as they please; ";
+     r.quote+="they do not make it under self-selected circumstances, but under circumstances existing already, ";
+     r.quote+="given and transmitted from the past.";
+       r.text="";
+      r.status=true;
+    }
+    if(type==="chk"){
+      if(req.query.a==="fuck" && req.query.b==="classical liberalism"){r.status=true;}
     }
   }
 
@@ -261,6 +321,55 @@ app.get('/challenge',function(req,res){
 
 
 // SEED FUNCTIONS
+// CREATE MORSE CODE SEQUENCE
+function morseSeq(t){
+  var bits=t.split(""), o="21212";
+  for(var i=0;i<bits.length;i++){
+    var b=bits[i], s="";
+    if(b==="k"){b="c";}
+    if(b===" "){s="12121";}
+    if(b==="a"){s="12000";}
+    if(b==="b"){s="21110";}
+    if(b==="c"){s="21210";}
+    if(b==="d"){s="21100";}
+    if(b==="e"){s="10000";}
+    if(b==="f"){s="11210";}
+    if(b==="g"){s="22100";}
+    if(b==="h"){s="11110";}
+    if(b==="i"){s="11000";}
+    if(b==="j"){s="12220";}
+    if(b==="l"){s="12110";}
+    if(b==="m"){s="22000";}
+    if(b==="n"){s="21000";}
+    if(b==="o"){s="22200";}
+    if(b==="p"){s="12210";}
+    if(b==="q"){s="22120";}
+    if(b==="r"){s="12100";}
+    if(b==="s"){s="11100";}
+    if(b==="t"){s="20000";}
+    if(b==="u"){s="11200";}
+    if(b==="v"){s="11120";}
+    if(b==="w"){s="12200";}
+    if(b==="x"){s="21120";}
+    if(b==="y"){s="21220";}
+    if(b==="z"){s="22110";}
+    if(b==="0"){s="22222";}
+    if(b==="1"){s="12222";}
+    if(b==="2"){s="11222";}
+    if(b==="3"){s="11122";}
+    if(b==="4"){s="11112";}
+    if(b==="5"){s="11111";}
+    if(b==="6"){s="21111";}
+    if(b==="7"){s="22111";}
+    if(b==="8"){s="22211";}
+    if(b==="9"){s="22221";}
+    o+=s;
+  }
+  o+="111212";
+  return o;
+}
+
+// CONVERT BASE NUMBERING
 function convertBase(value, from_base, to_base) {
   var range = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ+/'.split('');
   var from_range = range.slice(0, from_base);
@@ -282,6 +391,7 @@ function convertBase(value, from_base, to_base) {
 function charTextToDigit(t){
   var v=0;
   if(t==="k"){t="c";}
+  if(t===" "){v=" ";}
   if(t==="a"){v=1;}
   if(t==="b"){v=2;}
   if(t==="c"){v=3;}
