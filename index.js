@@ -1,3 +1,4 @@
+var debug=true;
 var express=require('express');
 var bodyParser=require('body-parser');
 var qrand=require('qrand');
@@ -5,14 +6,19 @@ var app=express();
 app.use(bodyParser.json());
 app.use(express.static('client'));
 
+
+
 var g=new Object();
 g.seed="";
-qrand.getRandomHexOctets(1024,function(e,d){
-  console.log("QUANTUM SEED UPDATE");
-  if(e===null){var r="";for(var i in d){if(!isNaN(d[i])){r+=d[i];}}g.seed=r.substr(0,640);}else{console.log("ERROR: "+e);}
-  app.listen(3000,()=>{console.log("Listening on port 3000");});
-});
-
+if(debug===true){seedDebug();init();}
+else{
+  qrand.getRandomHexOctets(1024,function(e,d){
+    if(e===null){var r="";for(var i in d){if(!isNaN(d[i])){r+=d[i];}}g.seed=r.substr(0,640);}else{console.log("ERROR: "+e);}
+    init();
+  });
+}
+function init(){app.listen(3000,()=>{console.log("Listening on port 3000");});}
+function seedDebug(){var s="1234567890";g.seed="";for(var i=0;i<64;i++){g.seed+=s;}}
 function seedUpdate(){
   qrand.getRandomHexOctets(1024,function(e,d){
     console.log("QUANTUM SEED UPDATE");
@@ -38,6 +44,7 @@ app.get('/challenge',function(req,res){
       var o="If you make people think they're thinking, they'll love you;<br><br>";
          o+="... but if you really make them think, they'll hate you.<br>";
       r.quote=o;
+      r.title="Oh, what a day! <b>What a lovely day!</b>";
       r.status=true;
     }
   }
@@ -47,6 +54,7 @@ app.get('/challenge',function(req,res){
     if(type==="init"){
       var c0=seedColor(seed,"r"), c1=seedColor(seed,"b"), c2=seedColor(seed,"g");
       r.r=c0, r.b=c1, r.g=c2;
+      r.title="... a flight not only from point A to point B";
       var o="There is nothing wrong with your television set.<br>";
          o+="Do not attempt to adjust the picture.<br>";
          o+="We are controlling transmission.<br>";
@@ -75,6 +83,7 @@ app.get('/challenge',function(req,res){
     if(type==="init"){
       var o="A day will come when sacred Troy shall perish;<br><br>... and Priam and his people shall be slain.<br>";
       r.quote=o;
+      r.title="What if one day those in the depths rise up against you?";
       r.status=true;
     }
     if(type==="chk"){
@@ -95,6 +104,7 @@ app.get('/challenge',function(req,res){
   // PUZZLE 3
   if(id===3){
     if(type==="init"){
+      r.title="Listen, kid, we're all in this together.";
       var o="As different as we have been taught to look at each other by colonial society, we are in the same struggle ";
          o+="and until we realize that, we'll be fighting for scraps from the table of a system that has kept us ";
          o+="subservient instead of being self-determined.";
@@ -132,6 +142,7 @@ app.get('/challenge',function(req,res){
 
   if(id===4){
     if(type==="init"){
+      r.title="It's not your story. It's my story...";
       var o="Life itself has no rules. That is its mystery and its unknown law. ";
          o+="What you call knowledge is an attempt to impose something comprehensible on life.<br>";
       r.quote=o;
@@ -166,6 +177,7 @@ app.get('/challenge',function(req,res){
 
   if(id===5){
     if(type==="init"){
+      r.title="Call 348-844 immediately.";
       var o="What was your name?<br>";
          o+="... and why don’t you now know what your name was then?<br><br>";
          o+="Where did it go? Where did you lose it? Who took it?<br>";
@@ -175,17 +187,17 @@ app.get('/challenge',function(req,res){
          o+="Where is your history?<br>";
          o+="How did the man wipe out your history?";
       r.quote=o;
-      r.text="Initial clue. Symbol animation. Second clue. Quote. All caps everything...<br>";
-      r.text+="i. Negate doubles on ends, second in doubles. ii. Remove the odd one out keep first and last only.<br>";
+      r.text="Initial clue. Symbol animation.<br>Second clue. Negate doubles on ends, second in doubles.<br>";
       r.status=true;
     }
     if(type==="chk"){
-      if(req.query.a==="RACISTDMSAFCCJMX"){r.status=true;}
+      if(req.query.a==="RACIST"){r.status=true;}
     }
   }
 
   if(id===6){
     if(type==="init"){
+      r.title="This is my ship, the Nebuchadnezzar.";
       var o="It is 'society' which provides man with food, clothing, a home, the tools of work, language, the forms of thought, ";
          o+="and most of the content of thought; ";
          o+="his life is made possible through the labor and the accomplishments of the many millions ";
@@ -205,6 +217,7 @@ app.get('/challenge',function(req,res){
 
   if(id===7){
     if(type==="init"){
+      r.title="One of these days I'm gonna get 'organized'.";
       var o="Dr. King's policy was that nonviolence would achieve the gains for black people in the United States. ";
          o+="His major assumption was that if you are nonviolent, ";
          o+="if you suffer, your opponent will see your suffering and will be moved to change his heart. ";
@@ -219,15 +232,14 @@ app.get('/challenge',function(req,res){
     }
     if(type==="chk"){
       var a=parseFloat(req.query.a), b=parseFloat(req.query.b);
-      console.log((a-b));
-      console.log((b-a));
       if((a-b)===34.75){r.status=true;}
-      if((b-a)===34.75){r.status=true;}
+      else if((b-a)===34.75){r.status=true;}
     }
   }
 
   if(id===8){
     if(type==="init"){
+      r.title="Don't be resigned to that. Break out!";
       var o="It is a historical fact that blacks were brought to this country ";
          o+="for the profit of the ruling class which at the time were landowners. ";
          o+="They needed someone to till the soil and grow profitable crops. ";
@@ -236,7 +248,7 @@ app.get('/challenge',function(req,res){
          o+="Therefore, for working people to be free, they must seize control of the means of production.";
       r.quote=o;
       r.hint="";
-      r.text="Nonviolent activists go further than endorsing state violence with their ";
+      r.text="Support every revolutionary movement against the existing social and political order of things.";
       r.status=true;
     }
     if(type==="chk"){
