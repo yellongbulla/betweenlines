@@ -185,7 +185,7 @@ function challenge(id,opt,d){
     if(opt==="init"){
       g.data[id]=new Object(), g.data[id].title=d.title, g.data[id].quote=d.quote;
       $("#title").html(g.data[id].title);
-      $("#hint")hide(0).html(g.data[id].quote).show(750);
+      $("#hint").hide(0).html(g.data[id].quote).show(750);
       audioTrackPlay("0");
     }
   }
