@@ -15,12 +15,13 @@ app.listen(3000,()=>{console.log("Listening on port 3000");});
 // SEED FUNCTIONS
 function seedDebug(){var s="1234567890";g.seed="";for(var i=0;i<64;i++){g.seed+=s;}}
 function seedUpdate(){
+  console.log("SEED UPDATE");
   if(g.debug!==true){
     qrand.getRandomHexOctets(1024,function(e,d){
-      console.log("QUANTUM SEED UPDATE");
+      console.log(" - QUANTUM");
       if(e===null){var r="";for(var i in d){if(!isNaN(d[i])){r+=d[i];}}g.seed=r.substr(0,640);}else{console.log("ERROR: "+e);}
     });
-  }else{seedDebug();console.log("SKIPPING SEED UPDATE");}
+  }else{seedDebug();console.log(" - DEBUG");}
 }
 
 // RANDOM SEED
@@ -31,18 +32,16 @@ app.get('/qrand',function(req,res){
 
 // CHALLENGES
 app.get('/challenge',function(req,res){
-  var r=new Object();
-  r.status=false;
-  var seed=req.query.seed, id=parseInt(req.query.id), type=req.query.type;
+  var r=new Object(), seed=req.query.seed, id=parseInt(req.query.id), type=req.query.type;
   console.log("PUZZLE: "+type+" - "+id);
+  r.status=false;
 
   // PUZZLE 0
   if(id===0){
     if(type==="init"){
-      var o="If you make people think they're thinking, they'll love you;<br><br>";
-         o+="... but if you really make them think, they'll hate you.<br>";
-      r.quote=o;
-      r.title="Oh, what a day! <b>What a lovely day!</b>";
+      r.title="Oh, what a day! What a lovely day!";
+      r.quote="If you make people think they're thinking, they'll love you;<br><br>";
+      r.quote+="... but if you really make them think, they'll hate you.<br>";
       r.status=true;
     }
   }
@@ -52,13 +51,13 @@ app.get('/challenge',function(req,res){
     if(type==="init"){
       var c0=seedColor(seed,"r"), c1=seedColor(seed,"b"), c2=seedColor(seed,"g");
       r.r=c0, r.b=c1, r.g=c2;
-      r.title="... a flight not only from point A to point B";
+      r.title="A flight not only from point A to point B...";
       var o="There is nothing wrong with your television set.<br>";
          o+="Do not attempt to adjust the picture.<br>";
          o+="We are controlling transmission.<br>";
          o+="If we wish to make it louder, we will bring up the volume.<br>";
          o+="If we wish to make it softer, we will tune it to a whisper.<br>";
-         o+="<div style='width:50%;text-align:center;'>x</div>";
+         o+="<div style='width:75%;text-align:center;'>x</div>";
          o+="We will control the horizontal. We will control the vertical.<br>";
          o+="We can roll the image, make it flutter.<br>";
          o+="We can change the focus to a soft blur or sharpen it to crystal clarity.<br>";
@@ -111,20 +110,8 @@ app.get('/challenge',function(req,res){
       var k0=seedKey(seedColor2GridKey(c0)), k1=seedKey(seedColor2GridKey(c1)), k2=seedKey(seedColor2GridKey(c2));
       var key=2+3+3+1;
       var msg="thumb over camera click where t should be";
-      var msgS="", msgA=msg.split(""), ks=0;
-      for(var m in msgA){
-        if(ks>2){ks=0;}
-        if(ks===0){var salt=k0;}
-        if(ks===1){var salt=k1;}
-        if(ks===2){var salt=k2;}
-        var mv=charTextToDigit(msgA[m]);
-        var mv=mv+key;
-        var mv=mv+salt;
-        msgS+=mv+", ";
-        ks++;
-      }
-      msgS=msgS.substr(0,(msgS.length-2));
-      r.text="... thank you.<br><br>"+msgS;
+      var msgE=stringToShift(msg,[k0,k1,k2],key);
+      r.text="... thank you.<br><br>"+msgE;
       r.hint="cargo number sequence. caesar shift alpha. loop key function(lp){return ((csa+key[lp])+cns)}";
       r.status=true;
     }
@@ -138,6 +125,7 @@ app.get('/challenge',function(req,res){
     }
   }
 
+  // PUZZLE 4
   if(id===4){
     if(type==="init"){
       r.title="It's not your story. It's my story...";
@@ -148,20 +136,8 @@ app.get('/challenge',function(req,res){
       var k0=seedKey(seedColor2GridKey(c0)), k1=seedKey(seedColor2GridKey(c1)), k2=seedKey(seedColor2GridKey(c2));
       var key=2+3+3+1;
       var msg="listen quiet abstract click same spot";
-      var msgS="", msgA=msg.split(""), ks=0;
-      for(var m in msgA){
-        if(ks>2){ks=0;}
-        if(ks===0){var salt=k0;}
-        if(ks===1){var salt=k1;}
-        if(ks===2){var salt=k2;}
-        var mv=charTextToDigit(msgA[m]);
-        var mv=mv+key;
-        var mv=mv+salt;
-        msgS+=mv+", ";
-        ks++;
-      }
-      msgS=msgS.substr(0,(msgS.length-2));
-      r.text="... but are you paying attention?<br><br>"+msgS;
+      var msgE=stringToShift(msg,[k0,k1,k2],key);
+      r.text="... but are you paying attention?<br><br>"+msgE;
       r.status=true;
     }
     if(type==="chk"){
@@ -173,6 +149,7 @@ app.get('/challenge',function(req,res){
     }
   }
 
+  // PUZZLE 5
   if(id===5){
     if(type==="init"){
       r.title="Call 348-844 immediately.";
@@ -185,20 +162,18 @@ app.get('/challenge',function(req,res){
          o+="Where is your history?<br>";
          o+="How did the man wipe out your history?";
       r.quote=o;
-      r.text="Initial clue. Symbol animation.<br>Second clue. Negate doubles on ends, second in doubles.<br>";
+      r.text="Initial clue. Symbol animation. Second clue. Negate doubles on ends, second in doubles.<br>";
       r.status=true;
     }
-    if(type==="chk"){
-      if(req.query.a==="RACIST"){r.status=true;}
-    }
+    if(type==="chk" && req.query.a==="RACIST"){r.status=true;}
   }
 
+  // PUZZLE 6
   if(id===6){
     if(type==="init"){
       r.title="This is my ship, the Nebuchadnezzar.";
       var o="It is 'society' which provides man with food, clothing, a home, the tools of work, language, the forms of thought, ";
-         o+="and most of the content of thought; ";
-         o+="his life is made possible through the labor and the accomplishments of the many millions ";
+         o+="and most of the content of thought; his life is made possible through the labor and the accomplishments of the many millions ";
          o+="past and present who are all hidden behind the small word 'society.'<br>";
       r.quote=o;
       r.hint="arcmin";
@@ -208,11 +183,10 @@ app.get('/challenge',function(req,res){
       r.text="Wikipedia:"+but+", not ";
       r.status=true;
     }
-    if(type==="chk"){
-      if(req.query.a==="truth"){r.status=true;}
-    }
+    if(type==="chk" && req.query.a==="truth"){r.status=true;}
   }
 
+  // PUZZLE 7
   if(id===7){
     if(type==="init"){
       r.title="One of these days I'm gonna get 'organized'.";
@@ -230,11 +204,11 @@ app.get('/challenge',function(req,res){
     }
     if(type==="chk"){
       var a=parseFloat(req.query.a), b=parseFloat(req.query.b);
-      if((a-b)===34.75){r.status=true;}
-      else if((b-a)===34.75){r.status=true;}
+      if((a-b)===34.75 || (b-a)===34.75){r.status=true;}
     }
   }
 
+  // PUZZLE 8
   if(id===8){
     if(type==="init"){
       r.title="Don't be resigned to that. Break out!";
@@ -278,15 +252,15 @@ app.get('/challenge',function(req,res){
       r.status=true;
     }
     if(type==="chk"){
-      if(parseInt(req.query.a)>=22000000 && parseInt(req.query.b)>=20000){
-        if(parseInt(req.query.c)>=152 && parseInt(req.query.c)<=168){
+      if(parseInt(req.query.a)>=22000000 && parseInt(req.query.b)>=512){
+        if(parseInt(req.query.c)>=452 && parseInt(req.query.c)<=468){
           if(parseInt(req.query.d)>=140 && parseInt(req.query.d)<=152){r.status=true;}
         }
       }
     }
   }
 
-  // CHALLENGE 9
+  // PUZZLE 9
   if(id===9){
     if(type==="init"){
       r.title="There is nothing in the desert, and no man needs nothing.";
@@ -296,12 +270,11 @@ app.get('/challenge',function(req,res){
       r.status=true;
     }
     if(type==="chk"){
-      console.log(req.query.b);
-      if(req.query.a==="fuck" && req.query.b==="classical+liberalism"){r.status=true;}
+      if(req.query.a==="fuck" && req.query.b==="classical liberalism"){r.status=true;}
     }
   }
 
-  // CHALLENGE 10
+  // PUZZLE 10
   if(id===10){
     if(type==="init"){
       r.title="Reports incredible as they may seem are not the results of mass hysteria.";
@@ -418,6 +391,22 @@ function charTextToDigit(t){
   if(t==="y"){v=24;}
   if(t==="z"){v=25;}
   return v;
+}
+
+function stringToShift(txt,keys,salt){
+  var o="", t=txt.split(""), k=0;
+  for(var m in t){
+    var d=charTextToDigit(t[m]);
+    if(d===" "){var d="-";}
+    else{
+      if(k>(keys.length-1)){k=0;}
+      var d=d+keys[k]+salt;
+    }
+    o+=d+", ";
+    k++;
+  }
+  var o=o.substr(0,(o.length-2));
+  return o;
 }
 
 function seedKey(t){
