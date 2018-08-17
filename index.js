@@ -109,17 +109,16 @@ app.get('/challenge',function(req,res){
       var c0=seedColor(seed,"b").substr(5,2), c1=seedColor(seed,"g").substr(3,2), c2=seedColor(seed,"r").substr(1,2);
       var k0=seedKey(seedColor2GridKey(c0)), k1=seedKey(seedColor2GridKey(c1)), k2=seedKey(seedColor2GridKey(c2));
       var key=2+3+3+1;
-      var msg="thumb over camera click where t should be";
+      var msg="thumb over camera left mouse where t should be";
       var msgE=stringToShift(msg,[k0,k1,k2],key);
       r.text="... thank you.<br><br>"+msgE;
       r.hint="cargo number sequence. caesar shift alpha. loop key function(lp){return ((csa+key[lp])+cns)}";
       r.status=true;
     }
     if(type==="chk"){
-      // min:1475000 - max:16000000
-      if(parseInt(req.query.a)<=16000000){
-        if(parseInt(req.query.b)>256 && parseInt(req.query.b)<320){
-          if(parseInt(req.query.c)>256 && parseInt(req.query.c)<320){r.status=true;}
+      if(parseInt(req.query.a)<=80000000){
+        if(parseInt(req.query.b)>(64*3) && parseInt(req.query.b)<(64*5)){
+          if(parseInt(req.query.c)>(64*3) && parseInt(req.query.c)<(64*5)){r.status=true;}
         }
       }
     }
@@ -135,15 +134,15 @@ app.get('/challenge',function(req,res){
       var c0=seedColor(seed,"b").substr(5,2), c1=seedColor(seed,"g").substr(3,2), c2=seedColor(seed,"r").substr(1,2);
       var k0=seedKey(seedColor2GridKey(c0)), k1=seedKey(seedColor2GridKey(c1)), k2=seedKey(seedColor2GridKey(c2));
       var key=2+3+3+1;
-      var msg="listen quiet abstract click same spot";
+      var msg="listen quiet abstract left mouse same spot";
       var msgE=stringToShift(msg,[k0,k1,k2],key);
       r.text="... but are you paying attention?<br><br>"+msgE;
       r.status=true;
     }
     if(type==="chk"){
       if(req.query.a==="0"){
-        if(parseInt(req.query.b)>256 && parseInt(req.query.b)<320){
-          if(parseInt(req.query.c)>256 && parseInt(req.query.c)<320){r.status=true;}
+        if(parseInt(req.query.b)>(64*3) && parseInt(req.query.b)<(64*5)){
+          if(parseInt(req.query.c)>(64*3) && parseInt(req.query.c)<(64*5)){r.status=true;}
         }
       }
     }
@@ -189,17 +188,17 @@ app.get('/challenge',function(req,res){
   // PUZZLE 7
   if(id===7){
     if(type==="init"){
-      r.title="One of these days I'm gonna get 'organized'.";
+      r.title="One of these days I'm gonna get organized.";
       var o="Dr. King's policy was that nonviolence would achieve the gains for black people in the United States. ";
          o+="His major assumption was that if you are nonviolent, ";
          o+="if you suffer, your opponent will see your suffering and will be moved to change his heart. ";
          o+="That's very good. He only made one fallacious assumption: ";
          o+="In order for nonviolence to work, your opponent must have a conscience.";
       r.quote=o;
-      r.hint="est-il temps de faire l'ancien régime? Saros YMD";
+      r.hint="est-il temps de faire l'ancien régime? Saros YDH";
       r.blob="Options have been violently constrained. See 224";
       r.text="Binary existence… I can show you that one plus one equals three.<br>";
-      r.text+="function(){return (Y+M+D)-(cargoSequence)/humanSpeciesEnemyFor;}";
+      r.text+="function(){return (Y+D+H)-(cargoSequence)/humanSpeciesEnemyFor;}";
       r.status=true;
     }
     if(type==="chk"){
@@ -219,12 +218,28 @@ app.get('/challenge',function(req,res){
          o+="But the same relationships exist between the private owner and the worker. Nothing has changed. ";
          o+="Therefore, for working people to be free, they must seize control of the means of production.";
       r.quote=o;
-      r.hint="";
-      r.text="Support every revolutionary movement against the existing social and political order of things.";
+      r.hint="Support every revolutionary movement against the existing social and political order of things.";
+      r.text="i: title 2nd word. ii: author is of. iii: author m is to r. iv: sequence each.";
+      r.hint0="       i. Join us in making the revolution a game;";
+      r.hint1="    ii. Majorities too may err and destroy our civilization.";
+      r.hint2="iii. not planting new seeds but expecting flowers from dying weeds.";
+      r.status=true;
+    }
+    if(type==="chk"){
+      if(req.query.a==="98" && req.query.b==="62" && req.query.c==="9"){r.status=true;}
+    }
+  }
+
+  // PUZZLE 9
+  if(id===9){
+    if(type==="init"){
+      r.title="There is nothing in the desert, and no man needs nothing.";
+      r.quote="Our posturings, our imagined self-importance, ";
+     r.quote+="the delusion that we have some privileged position in the universe, are challenged by this point of pale light.";
       var t0="carpe diem";
       var t1="sequence r4g g4w";
       var t2="mic up";
-      var t3="camera white click me";
+      var t3="thiscolor out camera left mouse here";
       var t4="shouts into the dark counting the seconds until a voice returns from";
       var s0=morseSeq(t0);
       var s1=morseSeq(t1);
@@ -254,23 +269,9 @@ app.get('/challenge',function(req,res){
     if(type==="chk"){
       if(parseInt(req.query.a)>=22000000 && parseInt(req.query.b)>=512){
         if(parseInt(req.query.c)>=452 && parseInt(req.query.c)<=468){
-          if(parseInt(req.query.d)>=140 && parseInt(req.query.d)<=152){r.status=true;}
+          if(parseInt(req.query.d)>=140 && parseInt(req.query.d)<=160){r.status=true;}
         }
       }
-    }
-  }
-
-  // PUZZLE 9
-  if(id===9){
-    if(type==="init"){
-      r.title="There is nothing in the desert, and no man needs nothing.";
-      r.quote="What is utopian is not planting new seeds but expecting flowers from dying weeds.";
-       r.text="TITLE. LAST WORD. Join us in making the revolution a game;<br>";
-      r.text+="AUTHOR. LECTURED ABOUT. Majorities too may err and destroy our civilization.<br>";
-      r.status=true;
-    }
-    if(type==="chk"){
-      if(req.query.a==="fuck" && req.query.b==="classical liberalism"){r.status=true;}
     }
   }
 
@@ -278,9 +279,7 @@ app.get('/challenge',function(req,res){
   if(id===10){
     if(type==="init"){
       r.title="Reports incredible as they may seem are not the results of mass hysteria.";
-      r.quote="Men make their own history, but they do not make it as they please; ";
-     r.quote+="they do not make it under self-selected circumstances, but under circumstances existing already, ";
-     r.quote+="given and transmitted from the past.";
+      r.quote="You can keep your gold. We just want our land back.";
        r.text="";
       r.status=true;
     }
